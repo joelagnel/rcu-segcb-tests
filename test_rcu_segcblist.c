@@ -518,25 +518,6 @@ static inline struct rcu_head **rcu_segcblist_tail(struct rcu_segcblist *rsclp)
        return rsclp->tails[RCU_NEXT_TAIL];
 }
 
-void rcu_segcblist_insert_done_cbs(struct rcu_segcblist *rsclp,
-				   struct rcu_cblist *rclp)
-{
-	int i;
-
-	if (!rclp->head)
-		return; /* No callbacks to move. */
-	rcu_segcblist_add_seglen(rsclp, RCU_DONE_TAIL, rclp->len);
-	*rclp->tail = rsclp->head;
-	WRITE_ONCE(rsclp->head, rclp->head);
-	for (i = RCU_DONE_TAIL; i < RCU_CBLIST_NSEGS; i++)
-		if (&rsclp->head == rsclp->tails[i])
-			WRITE_ONCE(rsclp->tails[i], rclp->tail);
-		else
-			break;
-	rclp->head = NULL;
-	rclp->tail = &rclp->head;
-}
-
 void rcu_segcblist_insert_count(struct rcu_segcblist *rsclp,
 				struct rcu_cblist *rclp)
 {
@@ -548,6 +529,20 @@ void rcu_segcblist_extract_count(struct rcu_segcblist *rsclp,
 					       struct rcu_cblist *rclp)
 {
 	rclp->len = rcu_segcblist_xchg_len(rsclp, 0);
+}
+
+static long rcu_segcblist_xchg_len(struct rcu_segcblist *rsclp, long v)
+{
+#ifdef CONFIG_RCU_NOCB_CPU
+	return atomic_long_xchg(&rsclp->len, v);
+#else
+	long ret = rsclp->len;
+
+	smp_mb(); /* Up to the caller! */
+	WRITE_ONCE(rsclp->len, v);
+	smp_mb(); /* Up to the caller! */
+	return ret;
+#endif
 }
 
 /* Done legacy functions.. ******/
