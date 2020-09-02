@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
 
 #include "fake.h"
 #include "rcu_segcblist.c"
@@ -136,6 +137,18 @@ void init_rh(int syndrome, struct rcu_segcblist *rsclp)
 		rsclp->len = 0;
 	else
 		rsclp->len = &rh[RCU_CBLIST_NSEGS - 1] - lastrhp + 1;
+}
+
+bool rcu_segcblist_future_gp_needed(struct rcu_segcblist *rsclp,
+				    unsigned long seq)
+{
+	int i;
+
+	for (i = RCU_WAIT_TAIL; i < RCU_NEXT_TAIL; i++)
+		if (rsclp->tails[i - 1] != rsclp->tails[i] &&
+		    ULONG_CMP_LT(seq, rsclp->gp_seq[i]))
+			return true;
+	return false;
 }
 
 void runtest(void (*f)(struct rcu_segcblist *rsclp, char *s, unsigned long gp,
@@ -322,6 +335,8 @@ rcu_advance_cbs_test(struct rcu_segcblist *rsclp, char *s_in,
 	*s++ = '\0';
 }
 
+bool rcu_segcblist_segempty(struct rcu_segcblist *rsclp, int seg);
+
 static void
 rcu_extract_cbs_test(struct rcu_segcblist *rsclp, char *s_in,
 		     unsigned long gp, unsigned long seq)
@@ -336,7 +351,6 @@ rcu_extract_cbs_test(struct rcu_segcblist *rsclp, char *s_in,
 	rcu_segcblist_fsck(rsclp, 10);
 	rcu_cblist_init(&rcl_next);
 	ql = rcu_segcblist_n_cbs(rsclp);
-	qll = rcu_segcblist_n_lazy_cbs(rsclp);
 	rcu_segcblist_extract_count(rsclp, &rcl_done);
 	rcu_segcblist_extract_done_cbs(rsclp, &rcl_done);
 	rcu_segcblist_extract_pend_cbs(rsclp, &rcl_next);
@@ -349,15 +363,10 @@ rcu_extract_cbs_test(struct rcu_segcblist *rsclp, char *s_in,
 		*s++ = '?';
 		*s++ = 'C';
 	}
-	if (rcu_segcblist_n_lazy_cbs(rsclp)) {
-		*s++ = '?';
-		*s++ = 'L';
-	}
 	rcu_segcblist_insert_count(rsclp, &rcl_done);
 	rcu_segcblist_insert_done_cbs(rsclp, &rcl_done);
 	rcu_segcblist_insert_pend_cbs(rsclp, &rcl_next);
 	assert(ql == rcu_segcblist_n_cbs(rsclp));
-	assert(qll == rcu_segcblist_n_lazy_cbs(rsclp));
 	if (!rcu_segcblist_segempty(rsclp, RCU_WAIT_TAIL)) {
 		*s++ = '?';
 		*s++ = 'C';
@@ -390,21 +399,126 @@ rcu_entrain_cbs_test(struct rcu_segcblist *rsclp, char *s_in)
 	rcu_segcblist_fsck(rsclp, 10);
 	empty = rcu_segcblist_empty(rsclp);
 	ql = rcu_segcblist_n_cbs(rsclp);
-	qll = rcu_segcblist_n_lazy_cbs(rsclp);
 	for (i = RCU_DONE_TAIL; i < RCU_CBLIST_NSEGS; i++)
 		segs[i] = rcu_segcblist_segempty(rsclp, i);
-	retval = rcu_segcblist_entrain(rsclp, &entrain_rh, false);
+	retval = rcu_segcblist_entrain(rsclp, &entrain_rh);
 	rcu_segcblist_fsck(rsclp, 10);
 	assert(empty != retval);
 	assert(!empty || rcu_segcblist_empty(rsclp));
 	if (!rcu_segcblist_empty(rsclp)) {
 		assert(rcu_segcblist_n_cbs(rsclp) == ql + 1);
-		assert(rcu_segcblist_n_lazy_cbs(rsclp) == qll);
 	}
 	for (i = RCU_DONE_TAIL; i < RCU_CBLIST_NSEGS; i++)
 		assert(segs[i] == rcu_segcblist_segempty(rsclp, i));
 	*s++ = '\0';
 }
+
+/* Add back legacy functions removed from the kernel ****/
+static inline struct rcu_head *rcu_segcblist_head(struct rcu_segcblist *rsclp)
+{
+	return rsclp->head;
+}
+
+struct rcu_head *rcu_segcblist_dequeue(struct rcu_segcblist *rsclp)
+{
+       unsigned long flags;
+       int i;
+       struct rcu_head *rhp;
+
+       local_irq_save(flags);
+       if (!rcu_segcblist_ready_cbs(rsclp)) {
+               local_irq_restore(flags);
+               return NULL;
+       }
+       rhp = rsclp->head;
+       BUG_ON(!rhp);
+       rsclp->head = rhp->next;
+       for (i = RCU_DONE_TAIL; i < RCU_CBLIST_NSEGS; i++) {
+               if (rsclp->tails[i] != &rhp->next)
+                       break;
+               rsclp->tails[i] = &rsclp->head;
+       }
+       smp_mb(); /* Dequeue before decrement for rcu_barrier(). */
+       WRITE_ONCE(rsclp->len, rsclp->len - 1);
+       local_irq_restore(flags);
+       return rhp;
+}
+
+/*
+ * Does the specified rcu_segcblist structure contain callbacks that
+ * have not yet been processed beyond having been posted, that is,
+ * does it contain callbacks in its last segment?
+ */
+bool rcu_segcblist_new_cbs(struct rcu_segcblist *rsclp)
+{
+	return rcu_segcblist_is_enabled(rsclp) &&
+		!rcu_segcblist_restempty(rsclp, RCU_NEXT_READY_TAIL);
+}
+
+/*
+ * Interim function to return rcu_cblist head pointer.  Longer term, the
+ * rcu_cblist will be used more pervasively, removing the need for this
+ * function.
+ */
+static inline struct rcu_head *rcu_cblist_head(struct rcu_cblist *rclp)
+{
+	return rclp->head;
+}
+
+/*
+ * Interim function to return rcu_cblist head pointer.  Longer term, the
+ * rcu_cblist will be used more pervasively, removing the need for this
+ * function.
+ */
+static inline struct rcu_head **rcu_cblist_tail(struct rcu_cblist *rclp)
+{
+	WARN_ON_ONCE(!rclp->head);
+	return rclp->tail;
+}
+
+
+/*
+ * Is the specified segment of the specified rcu_segcblist structure
+ * empty of callbacks?
+ */
+bool rcu_segcblist_segempty(struct rcu_segcblist *rsclp, int seg)
+{
+	if (seg == RCU_DONE_TAIL)
+		return &rsclp->head == rsclp->tails[RCU_DONE_TAIL];
+	return rsclp->tails[seg - 1] == rsclp->tails[seg];
+}
+
+
+ /*
+ * Debug function to actually count the number of callbacks.
+ * If the number exceeds the limit specified, return -1.
+ */
+long rcu_cblist_count_cbs(struct rcu_cblist *rclp, long lim)
+{
+	int cnt = 0;
+	struct rcu_head **rhpp = &rclp->head;
+
+	for (;;) {
+		if (!*rhpp)
+			return cnt;
+		if (++cnt > lim)
+			return -1;
+		rhpp = &(*rhpp)->next;
+	}
+}
+
+/*
+ * Interim function to return rcu_segcblist head pointer.  Longer term, the
+ * rcu_segcblist will be used more pervasively, removing the need for this
+ * function.
+ */
+static inline struct rcu_head **rcu_segcblist_tail(struct rcu_segcblist *rsclp)
+{
+       WARN_ON_ONCE(rcu_segcblist_empty(rsclp));
+       return rsclp->tails[RCU_NEXT_TAIL];
+}
+
+/* Done legacy functions.. ******/
 
 int main(int argc, char *argv[])
 {
@@ -415,8 +529,6 @@ int main(int argc, char *argv[])
 	rcu_segcblist_init(&rscl);
 	assert(rcu_segcblist_empty(&rscl));
 	assert(rcu_segcblist_n_cbs(&rscl) == 0);
-	assert(rcu_segcblist_n_lazy_cbs(&rscl) == 0);
-	assert(rcu_segcblist_n_nonlazy_cbs(&rscl) == 0);
 	assert(rcu_segcblist_is_enabled(&rscl));
 	for (i = RCU_DONE_TAIL; i < RCU_CBLIST_NSEGS; i++) {
 		assert(rcu_segcblist_segempty(&rscl, i));
@@ -430,13 +542,11 @@ int main(int argc, char *argv[])
 	assert(rhp == NULL);
 	assert(!rcu_segcblist_head(&rscl));
 
-	rcu_segcblist_enqueue(&rscl, &rh[0], false);
+	rcu_segcblist_enqueue(&rscl, &rh[0]);
 	rhp = rcu_segcblist_first_cb(&rscl);
 	assert(rhp == &rh[0]);
 	assert(!rcu_segcblist_empty(&rscl));
 	assert(rcu_segcblist_n_cbs(&rscl) == 1);
-	assert(rcu_segcblist_n_lazy_cbs(&rscl) == 0);
-	assert(rcu_segcblist_n_nonlazy_cbs(&rscl) == 1);
 	assert(rcu_segcblist_first_pend_cb(&rscl) == &rh[0]);
 #ifdef FORCE_FAILURE
 	rcu_segcblist_disable(&rscl);
@@ -479,14 +589,14 @@ int main(int argc, char *argv[])
 
 	rcu_segcblist_init(&rscl);
 	rcu_segcblist_fsck(&rscl, 10);
-	rcu_segcblist_enqueue(&rscl, &rh[0], false);
+	rcu_segcblist_enqueue(&rscl, &rh[0]);
 	rcu_segcblist_fsck(&rscl, 10);
 	rcu_segcblist_accelerate(&rscl, 5);
 	rcu_segcblist_fsck(&rscl, 10);
-	rcu_segcblist_enqueue(&rscl, &rh[1], false);
+	rcu_segcblist_enqueue(&rscl, &rh[1]);
 	rcu_segcblist_advance(&rscl, 5);
 	rcu_segcblist_accelerate(&rscl, 6);
-	rcu_segcblist_enqueue(&rscl, &rh[2], true);
+	rcu_segcblist_enqueue(&rscl, &rh[2]);
 	assert(rcu_segcblist_dequeue(&rscl) == &rh[0]);
 	assert(rcu_segcblist_dequeue(&rscl) == NULL);
 	rcu_segcblist_advance(&rscl, 6);
@@ -495,7 +605,6 @@ int main(int argc, char *argv[])
 	assert(rcu_segcblist_dequeue(&rscl) == NULL);
 	rcu_segcblist_advance(&rscl, 7);
 	assert(rcu_segcblist_dequeue(&rscl) == &rh[2]);
-	rcu_segcblist_dequeued_lazy(&rscl);
 	assert(rcu_segcblist_dequeue(&rscl) == NULL);
 	assert(rcu_segcblist_empty(&rscl));
 
