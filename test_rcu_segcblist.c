@@ -507,6 +507,20 @@ long rcu_cblist_count_cbs(struct rcu_cblist *rclp, long lim)
 	}
 }
 
+static long rcu_segcblist_xchg_len(struct rcu_segcblist *rsclp, long v)
+{
+#ifdef CONFIG_RCU_NOCB_CPU
+	return atomic_long_xchg(&rsclp->len, v);
+#else
+	long ret = rsclp->len;
+
+	smp_mb(); /* Up to the caller! */
+	WRITE_ONCE(rsclp->len, v);
+	smp_mb(); /* Up to the caller! */
+	return ret;
+#endif
+}
+
 /*
  * Interim function to return rcu_segcblist head pointer.  Longer term, the
  * rcu_segcblist will be used more pervasively, removing the need for this
@@ -529,20 +543,6 @@ void rcu_segcblist_extract_count(struct rcu_segcblist *rsclp,
 					       struct rcu_cblist *rclp)
 {
 	rclp->len = rcu_segcblist_xchg_len(rsclp, 0);
-}
-
-static long rcu_segcblist_xchg_len(struct rcu_segcblist *rsclp, long v)
-{
-#ifdef CONFIG_RCU_NOCB_CPU
-	return atomic_long_xchg(&rsclp->len, v);
-#else
-	long ret = rsclp->len;
-
-	smp_mb(); /* Up to the caller! */
-	WRITE_ONCE(rsclp->len, v);
-	smp_mb(); /* Up to the caller! */
-	return ret;
-#endif
 }
 
 /* Done legacy functions.. ******/
