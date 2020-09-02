@@ -518,6 +518,38 @@ static inline struct rcu_head **rcu_segcblist_tail(struct rcu_segcblist *rsclp)
        return rsclp->tails[RCU_NEXT_TAIL];
 }
 
+void rcu_segcblist_insert_done_cbs(struct rcu_segcblist *rsclp,
+				   struct rcu_cblist *rclp)
+{
+	int i;
+
+	if (!rclp->head)
+		return; /* No callbacks to move. */
+	rcu_segcblist_add_seglen(rsclp, RCU_DONE_TAIL, rclp->len);
+	*rclp->tail = rsclp->head;
+	WRITE_ONCE(rsclp->head, rclp->head);
+	for (i = RCU_DONE_TAIL; i < RCU_CBLIST_NSEGS; i++)
+		if (&rsclp->head == rsclp->tails[i])
+			WRITE_ONCE(rsclp->tails[i], rclp->tail);
+		else
+			break;
+	rclp->head = NULL;
+	rclp->tail = &rclp->head;
+}
+
+void rcu_segcblist_insert_count(struct rcu_segcblist *rsclp,
+				struct rcu_cblist *rclp)
+{
+	rcu_segcblist_add_len(rsclp, rclp->len);
+	rclp->len = 0;
+}
+
+void rcu_segcblist_extract_count(struct rcu_segcblist *rsclp,
+					       struct rcu_cblist *rclp)
+{
+	rclp->len = rcu_segcblist_xchg_len(rsclp, 0);
+}
+
 /* Done legacy functions.. ******/
 
 int main(int argc, char *argv[])
