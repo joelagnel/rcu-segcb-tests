@@ -610,6 +610,8 @@ int main(int argc, char *argv[])
 
 	rcu_segcblist_disable(&rscl);
 	assert(!rcu_segcblist_is_enabled(&rscl));
+	rcu_segcblist_init(&rscl);
+
 	printf("Done with smoketest\n");
 
 	printf("\n--- rcu_accelerate_cbs(!in_gp, root):\n");
