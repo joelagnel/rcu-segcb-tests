@@ -1,0 +1,380 @@
+Starting smoketest
+Done with smoketest
+
+--- rcu_accelerate_cbs(!in_gp, root):
+ 0, 0, 1: DW3R3N           == DW3R3N           . .
+ 1, 0, 1: DW2R2|dN         -> D|dW1R1N         F .
+ 2, 2, 3: DW2|dR3N         -> D|dW3R3N         F .
+ 2, 3, 4: DW2|dR3N         == DW2|dR3N        h . .h
+ 3, 1, 2: DW1|cR2|dN       -> D|c|dW2R2N       F .
+ 3, 2, 3: DW1|cR2|dN       == DW1|cR2|dN      h . .h
+ 4, 2, 3: D|dW3R3N         == D|dW3R3N         F .
+ 4, 3, 4: D|dW3R3N         -> D|dW3R4N         . .
+ 5, 1, 2: D|cW2R2|dN       -> D|c|dW2R2N       F .
+ 5, 2, 3: D|cW2R2|dN       -> D|cW2|dR3N       F .
+ 6, 1, 2: D|cW2|dR3N       -> D|c|dW2R2N       F .
+ 6, 2, 3: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 3, 4: D|cW2|dR3N       == D|cW2|dR3N       . .
+ 7, 0, 1: D|bW1|cR2|dN     -> D|b|c|dW1R1N     F .
+ 7, 1, 2: D|bW1|cR2|dN     -> D|bW1|c|dR2N     F .
+ 7, 2, 3: D|bW1|cR2|dN     == D|bW1|cR2|dN     . .
+ 8, 0, 1: |dDW3R3N         == |dDW3R3N         . .
+ 9, 0, 1: |cDW2R2|dN       -> |cD|dW1R1N       F .
+10, 2, 3: |cDW2|dR3N       -> |cD|dW3R3N       F .
+10, 3, 4: |cDW2|dR3N       == |cDW2|dR3N      h . .h
+11, 1, 2: |bDW1|cR2|dN     -> |bD|c|dW2R2N     F .
+11, 2, 3: |bDW1|cR2|dN     == |bDW1|cR2|dN    h . .h
+12, 2, 3: |cD|dW3R3N       == |cD|dW3R3N       F .
+12, 3, 4: |cD|dW3R3N       -> |cD|dW3R4N       . .
+13, 1, 2: |bD|cW2R2|dN     -> |bD|c|dW2R2N     F .
+13, 2, 3: |bD|cW2R2|dN     -> |bD|cW2|dR3N     F .
+14, 1, 2: |bD|cW2|dR3N     -> |bD|c|dW2R2N     F .
+14, 2, 3: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 3, 4: |bD|cW2|dR3N     == |bD|cW2|dR3N     . .
+15, 0, 1: |aD|bW1|cR2|dN   -> |aD|b|c|dW1R1N   F .
+15, 1, 2: |aD|bW1|cR2|dN   -> |aD|bW1|c|dR2N   F .
+15, 2, 3: |aD|bW1|cR2|dN   == |aD|bW1|cR2|dN   . .
+
+--- rcu_accelerate_cbs(!in_gp, !root):
+ 0, 0, 2: DW3R3N           == DW3R3N           . .
+ 1, 0, 2: DW2R2|dN         -> D|dW2R2N         F .
+ 2, 1, 3: DW2|dR3N         -> D|dW3R3N         F .
+ 2, 2, 4: DW2|dR3N         == DW2|dR3N        h F .h
+ 2, 3, 5: DW2|dR3N         == DW2|dR3N        h . .h
+ 3, 0, 2: DW1|cR2|dN       -> D|c|dW2R2N       F .
+ 3, 1, 3: DW1|cR2|dN       == DW1|cR2|dN      h F .h
+ 3, 2, 4: DW1|cR2|dN       == DW1|cR2|dN      h . .h
+ 4, 1, 3: D|dW3R3N         == D|dW3R3N         F .
+ 4, 2, 4: D|dW3R3N         -> D|dW3R4N         F .
+ 4, 3, 5: D|dW3R3N         -> D|dW3R5N         . .
+ 5, 0, 2: D|cW2R2|dN       -> D|c|dW2R2N       F .
+ 5, 1, 3: D|cW2R2|dN       -> D|cW2|dR3N       F .
+ 5, 2, 4: D|cW2R2|dN       -> D|cW2|dR4N       F .
+ 6, 0, 2: D|cW2|dR3N       -> D|c|dW2R2N       F .
+ 6, 1, 3: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 2, 4: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 3, 5: D|cW2|dR3N       == D|cW2|dR3N       . .
+ 7,-1, 1: D|bW1|cR2|dN     -> D|b|c|dW1R1N     F .
+ 7, 0, 2: D|bW1|cR2|dN     -> D|bW1|c|dR2N     F .
+ 7, 1, 3: D|bW1|cR2|dN     == D|bW1|cR2|dN     F .
+ 7, 2, 4: D|bW1|cR2|dN     == D|bW1|cR2|dN     . .
+ 8, 0, 2: |dDW3R3N         == |dDW3R3N         . .
+ 9, 0, 2: |cDW2R2|dN       -> |cD|dW2R2N       F .
+10, 1, 3: |cDW2|dR3N       -> |cD|dW3R3N       F .
+10, 2, 4: |cDW2|dR3N       == |cDW2|dR3N      h F .h
+10, 3, 5: |cDW2|dR3N       == |cDW2|dR3N      h . .h
+11, 0, 2: |bDW1|cR2|dN     -> |bD|c|dW2R2N     F .
+11, 1, 3: |bDW1|cR2|dN     == |bDW1|cR2|dN    h F .h
+11, 2, 4: |bDW1|cR2|dN     == |bDW1|cR2|dN    h . .h
+12, 1, 3: |cD|dW3R3N       == |cD|dW3R3N       F .
+12, 2, 4: |cD|dW3R3N       -> |cD|dW3R4N       F .
+12, 3, 5: |cD|dW3R3N       -> |cD|dW3R5N       . .
+13, 0, 2: |bD|cW2R2|dN     -> |bD|c|dW2R2N     F .
+13, 1, 3: |bD|cW2R2|dN     -> |bD|cW2|dR3N     F .
+13, 2, 4: |bD|cW2R2|dN     -> |bD|cW2|dR4N     F .
+14, 0, 2: |bD|cW2|dR3N     -> |bD|c|dW2R2N     F .
+14, 1, 3: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 2, 4: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 3, 5: |bD|cW2|dR3N     == |bD|cW2|dR3N     . .
+15,-1, 1: |aD|bW1|cR2|dN   -> |aD|b|c|dW1R1N   F .
+15, 0, 2: |aD|bW1|cR2|dN   -> |aD|bW1|c|dR2N   F .
+15, 1, 3: |aD|bW1|cR2|dN   == |aD|bW1|cR2|dN   F .
+15, 2, 4: |aD|bW1|cR2|dN   == |aD|bW1|cR2|dN   . .
+
+--- rcu_accelerate_cbs(in_gp, root):
+ 0, 0, 2: DW3R3N           == DW3R3N           . .
+ 1, 0, 2: DW2R2|dN         -> D|dW2R2N         F .
+ 2, 1, 3: DW2|dR3N         -> D|dW3R3N         F .
+ 2, 2, 4: DW2|dR3N         == DW2|dR3N        h F .h
+ 2, 3, 5: DW2|dR3N         == DW2|dR3N        h . .h
+ 3, 0, 2: DW1|cR2|dN       -> D|c|dW2R2N       F .
+ 3, 1, 3: DW1|cR2|dN       == DW1|cR2|dN      h F .h
+ 3, 2, 4: DW1|cR2|dN       == DW1|cR2|dN      h . .h
+ 4, 1, 3: D|dW3R3N         == D|dW3R3N         F .
+ 4, 2, 4: D|dW3R3N         -> D|dW3R4N         F .
+ 4, 3, 5: D|dW3R3N         -> D|dW3R5N         . .
+ 5, 0, 2: D|cW2R2|dN       -> D|c|dW2R2N       F .
+ 5, 1, 3: D|cW2R2|dN       -> D|cW2|dR3N       F .
+ 5, 2, 4: D|cW2R2|dN       -> D|cW2|dR4N       F .
+ 6, 0, 2: D|cW2|dR3N       -> D|c|dW2R2N       F .
+ 6, 1, 3: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 2, 4: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 3, 5: D|cW2|dR3N       == D|cW2|dR3N       . .
+ 7,-1, 1: D|bW1|cR2|dN     -> D|b|c|dW1R1N     F .
+ 7, 0, 2: D|bW1|cR2|dN     -> D|bW1|c|dR2N     F .
+ 7, 1, 3: D|bW1|cR2|dN     == D|bW1|cR2|dN     F .
+ 7, 2, 4: D|bW1|cR2|dN     == D|bW1|cR2|dN     . .
+ 8, 0, 2: |dDW3R3N         == |dDW3R3N         . .
+ 9, 0, 2: |cDW2R2|dN       -> |cD|dW2R2N       F .
+10, 1, 3: |cDW2|dR3N       -> |cD|dW3R3N       F .
+10, 2, 4: |cDW2|dR3N       == |cDW2|dR3N      h F .h
+10, 3, 5: |cDW2|dR3N       == |cDW2|dR3N      h . .h
+11, 0, 2: |bDW1|cR2|dN     -> |bD|c|dW2R2N     F .
+11, 1, 3: |bDW1|cR2|dN     == |bDW1|cR2|dN    h F .h
+11, 2, 4: |bDW1|cR2|dN     == |bDW1|cR2|dN    h . .h
+12, 1, 3: |cD|dW3R3N       == |cD|dW3R3N       F .
+12, 2, 4: |cD|dW3R3N       -> |cD|dW3R4N       F .
+12, 3, 5: |cD|dW3R3N       -> |cD|dW3R5N       . .
+13, 0, 2: |bD|cW2R2|dN     -> |bD|c|dW2R2N     F .
+13, 1, 3: |bD|cW2R2|dN     -> |bD|cW2|dR3N     F .
+13, 2, 4: |bD|cW2R2|dN     -> |bD|cW2|dR4N     F .
+14, 0, 2: |bD|cW2|dR3N     -> |bD|c|dW2R2N     F .
+14, 1, 3: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 2, 4: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 3, 5: |bD|cW2|dR3N     == |bD|cW2|dR3N     . .
+15,-1, 1: |aD|bW1|cR2|dN   -> |aD|b|c|dW1R1N   F .
+15, 0, 2: |aD|bW1|cR2|dN   -> |aD|bW1|c|dR2N   F .
+15, 1, 3: |aD|bW1|cR2|dN   == |aD|bW1|cR2|dN   F .
+15, 2, 4: |aD|bW1|cR2|dN   == |aD|bW1|cR2|dN   . .
+
+--- rcu_accelerate_cbs(in_gp, !root):
+ 0, 0, 2: DW3R3N           == DW3R3N           . .
+ 1, 0, 2: DW2R2|dN         -> D|dW2R2N         F .
+ 2, 1, 3: DW2|dR3N         -> D|dW3R3N         F .
+ 2, 2, 4: DW2|dR3N         == DW2|dR3N        h F .h
+ 2, 3, 5: DW2|dR3N         == DW2|dR3N        h . .h
+ 3, 0, 2: DW1|cR2|dN       -> D|c|dW2R2N       F .
+ 3, 1, 3: DW1|cR2|dN       == DW1|cR2|dN      h F .h
+ 3, 2, 4: DW1|cR2|dN       == DW1|cR2|dN      h . .h
+ 4, 1, 3: D|dW3R3N         == D|dW3R3N         F .
+ 4, 2, 4: D|dW3R3N         -> D|dW3R4N         F .
+ 4, 3, 5: D|dW3R3N         -> D|dW3R5N         . .
+ 5, 0, 2: D|cW2R2|dN       -> D|c|dW2R2N       F .
+ 5, 1, 3: D|cW2R2|dN       -> D|cW2|dR3N       F .
+ 5, 2, 4: D|cW2R2|dN       -> D|cW2|dR4N       F .
+ 6, 0, 2: D|cW2|dR3N       -> D|c|dW2R2N       F .
+ 6, 1, 3: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 2, 4: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 3, 5: D|cW2|dR3N       == D|cW2|dR3N       . .
+ 7,-1, 1: D|bW1|cR2|dN     -> D|b|c|dW1R1N     F .
+ 7, 0, 2: D|bW1|cR2|dN     -> D|bW1|c|dR2N     F .
+ 7, 1, 3: D|bW1|cR2|dN     == D|bW1|cR2|dN     F .
+ 7, 2, 4: D|bW1|cR2|dN     == D|bW1|cR2|dN     . .
+ 8, 0, 2: |dDW3R3N         == |dDW3R3N         . .
+ 9, 0, 2: |cDW2R2|dN       -> |cD|dW2R2N       F .
+10, 1, 3: |cDW2|dR3N       -> |cD|dW3R3N       F .
+10, 2, 4: |cDW2|dR3N       == |cDW2|dR3N      h F .h
+10, 3, 5: |cDW2|dR3N       == |cDW2|dR3N      h . .h
+11, 0, 2: |bDW1|cR2|dN     -> |bD|c|dW2R2N     F .
+11, 1, 3: |bDW1|cR2|dN     == |bDW1|cR2|dN    h F .h
+11, 2, 4: |bDW1|cR2|dN     == |bDW1|cR2|dN    h . .h
+12, 1, 3: |cD|dW3R3N       == |cD|dW3R3N       F .
+12, 2, 4: |cD|dW3R3N       -> |cD|dW3R4N       F .
+12, 3, 5: |cD|dW3R3N       -> |cD|dW3R5N       . .
+13, 0, 2: |bD|cW2R2|dN     -> |bD|c|dW2R2N     F .
+13, 1, 3: |bD|cW2R2|dN     -> |bD|cW2|dR3N     F .
+13, 2, 4: |bD|cW2R2|dN     -> |bD|cW2|dR4N     F .
+14, 0, 2: |bD|cW2|dR3N     -> |bD|c|dW2R2N     F .
+14, 1, 3: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 2, 4: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 3, 5: |bD|cW2|dR3N     == |bD|cW2|dR3N     . .
+15,-1, 1: |aD|bW1|cR2|dN   -> |aD|b|c|dW1R1N   F .
+15, 0, 2: |aD|bW1|cR2|dN   -> |aD|bW1|c|dR2N   F .
+15, 1, 3: |aD|bW1|cR2|dN   == |aD|bW1|cR2|dN   F .
+15, 2, 4: |aD|bW1|cR2|dN   == |aD|bW1|cR2|dN   . .
+
+--- rcu_advance_cbs(!in_gp, root):
+ 0, 0, 1: DW3R3N           == DW3R3N           . .
+ 1, 0, 1: DW2R2|dN         -> D|dW1R1N         F .
+ 2, 2, 3: DW2|dR3N         -> D|dW3R3N         F .
+ 2, 3, 4: DW2|dR3N         -> |dDW2R3N         . .
+ 3, 1, 2: DW1|cR2|dN       -> D|c|dW2R2N       F .
+ 3, 2, 3: DW1|cR2|dN       -> |cD|dW3R3N       F .
+ 4, 2, 3: D|dW3R3N         == D|dW3R3N         F .
+ 4, 3, 4: D|dW3R3N         -> |dDW3R3N         . .
+ 5, 1, 2: D|cW2R2|dN       -> D|c|dW2R2N       F .
+ 5, 2, 3: D|cW2R2|dN       -> |cD|dW3R3N       F .
+ 6, 1, 2: D|cW2|dR3N       -> D|c|dW2R2N       F .
+ 6, 2, 3: D|cW2|dR3N       -> |cD|dW3R3N       F .
+ 6, 3, 4: D|cW2|dR3N       -> |c|dDW2R3N       . .
+ 7, 0, 1: D|bW1|cR2|dN     -> D|b|c|dW1R1N     F .
+ 7, 1, 2: D|bW1|cR2|dN     -> |bD|c|dW2R2N     F .
+ 7, 2, 3: D|bW1|cR2|dN     -> |b|cD|dW3R3N     F .
+ 8, 0, 1: |dDW3R3N         == |dDW3R3N         . .
+ 9, 0, 1: |cDW2R2|dN       -> |cD|dW1R1N       F .
+10, 2, 3: |cDW2|dR3N       -> |cD|dW3R3N       F .
+10, 3, 4: |cDW2|dR3N       -> |c|dDW2R3N       . .
+11, 1, 2: |bDW1|cR2|dN     -> |bD|c|dW2R2N     F .
+11, 2, 3: |bDW1|cR2|dN     -> |b|cD|dW3R3N     F .
+12, 2, 3: |cD|dW3R3N       == |cD|dW3R3N       F .
+12, 3, 4: |cD|dW3R3N       -> |c|dDW3R3N       . .
+13, 1, 2: |bD|cW2R2|dN     -> |bD|c|dW2R2N     F .
+13, 2, 3: |bD|cW2R2|dN     -> |b|cD|dW3R3N     F .
+14, 1, 2: |bD|cW2|dR3N     -> |bD|c|dW2R2N     F .
+14, 2, 3: |bD|cW2|dR3N     -> |b|cD|dW3R3N     F .
+14, 3, 4: |bD|cW2|dR3N     -> |b|c|dDW2R3N     . .
+15, 0, 1: |aD|bW1|cR2|dN   -> |aD|b|c|dW1R1N   F .
+15, 1, 2: |aD|bW1|cR2|dN   -> |a|bD|c|dW2R2N   F .
+15, 2, 3: |aD|bW1|cR2|dN   -> |a|b|cD|dW3R3N   F .
+
+--- rcu_advance_cbs(!in_gp, !root):
+ 0, 0, 2: DW3R3N           == DW3R3N           . .
+ 1, 0, 2: DW2R2|dN         -> D|dW2R2N         F .
+ 2, 1, 3: DW2|dR3N         -> D|dW3R3N         F .
+ 2, 2, 4: DW2|dR3N         -> D|dW3R4N         F .
+ 2, 3, 5: DW2|dR3N         -> |dDW2R3N         . .
+ 3, 0, 2: DW1|cR2|dN       -> D|c|dW2R2N       F .
+ 3, 1, 3: DW1|cR2|dN       -> D|cW2|dR3N       F .
+ 3, 2, 4: DW1|cR2|dN       -> |cD|dW4R4N       F .
+ 4, 1, 3: D|dW3R3N         == D|dW3R3N         F .
+ 4, 2, 4: D|dW3R3N         -> D|dW3R4N         F .
+ 4, 3, 5: D|dW3R3N         -> |dDW3R3N         . .
+ 5, 0, 2: D|cW2R2|dN       -> D|c|dW2R2N       F .
+ 5, 1, 3: D|cW2R2|dN       -> D|cW2|dR3N       F .
+ 5, 2, 4: D|cW2R2|dN       -> |cD|dW4R4N       F .
+ 6, 0, 2: D|cW2|dR3N       -> D|c|dW2R2N       F .
+ 6, 1, 3: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 2, 4: D|cW2|dR3N       -> |cD|dW3R4N       F .
+ 6, 3, 5: D|cW2|dR3N       -> |c|dDW2R3N       . .
+ 7,-1, 1: D|bW1|cR2|dN     -> D|b|c|dW1R1N     F .
+ 7, 0, 2: D|bW1|cR2|dN     -> D|bW1|c|dR2N     F .
+ 7, 1, 3: D|bW1|cR2|dN     -> |bD|cW2|dR3N     F .
+ 7, 2, 4: D|bW1|cR2|dN     -> |b|cD|dW4R4N     F .
+ 8, 0, 2: |dDW3R3N         == |dDW3R3N         . .
+ 9, 0, 2: |cDW2R2|dN       -> |cD|dW2R2N       F .
+10, 1, 3: |cDW2|dR3N       -> |cD|dW3R3N       F .
+10, 2, 4: |cDW2|dR3N       -> |cD|dW3R4N       F .
+10, 3, 5: |cDW2|dR3N       -> |c|dDW2R3N       . .
+11, 0, 2: |bDW1|cR2|dN     -> |bD|c|dW2R2N     F .
+11, 1, 3: |bDW1|cR2|dN     -> |bD|cW2|dR3N     F .
+11, 2, 4: |bDW1|cR2|dN     -> |b|cD|dW4R4N     F .
+12, 1, 3: |cD|dW3R3N       == |cD|dW3R3N       F .
+12, 2, 4: |cD|dW3R3N       -> |cD|dW3R4N       F .
+12, 3, 5: |cD|dW3R3N       -> |c|dDW3R3N       . .
+13, 0, 2: |bD|cW2R2|dN     -> |bD|c|dW2R2N     F .
+13, 1, 3: |bD|cW2R2|dN     -> |bD|cW2|dR3N     F .
+13, 2, 4: |bD|cW2R2|dN     -> |b|cD|dW4R4N     F .
+14, 0, 2: |bD|cW2|dR3N     -> |bD|c|dW2R2N     F .
+14, 1, 3: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 2, 4: |bD|cW2|dR3N     -> |b|cD|dW3R4N     F .
+14, 3, 5: |bD|cW2|dR3N     -> |b|c|dDW2R3N     . .
+15,-1, 1: |aD|bW1|cR2|dN   -> |aD|b|c|dW1R1N   F .
+15, 0, 2: |aD|bW1|cR2|dN   -> |aD|bW1|c|dR2N   F .
+15, 1, 3: |aD|bW1|cR2|dN   -> |a|bD|cW2|dR3N   F .
+15, 2, 4: |aD|bW1|cR2|dN   -> |a|b|cD|dW4R4N   F .
+
+--- rcu_advance_cbs(in_gp, root):
+ 0, 0, 2: DW3R3N           == DW3R3N           . .
+ 1, 0, 2: DW2R2|dN         -> D|dW2R2N         F .
+ 2, 1, 3: DW2|dR3N         -> D|dW3R3N         F .
+ 2, 2, 4: DW2|dR3N         -> D|dW3R4N         F .
+ 2, 3, 5: DW2|dR3N         -> |dDW2R3N         . .
+ 3, 0, 2: DW1|cR2|dN       -> D|c|dW2R2N       F .
+ 3, 1, 3: DW1|cR2|dN       -> D|cW2|dR3N       F .
+ 3, 2, 4: DW1|cR2|dN       -> |cD|dW4R4N       F .
+ 4, 1, 3: D|dW3R3N         == D|dW3R3N         F .
+ 4, 2, 4: D|dW3R3N         -> D|dW3R4N         F .
+ 4, 3, 5: D|dW3R3N         -> |dDW3R3N         . .
+ 5, 0, 2: D|cW2R2|dN       -> D|c|dW2R2N       F .
+ 5, 1, 3: D|cW2R2|dN       -> D|cW2|dR3N       F .
+ 5, 2, 4: D|cW2R2|dN       -> |cD|dW4R4N       F .
+ 6, 0, 2: D|cW2|dR3N       -> D|c|dW2R2N       F .
+ 6, 1, 3: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 2, 4: D|cW2|dR3N       -> |cD|dW3R4N       F .
+ 6, 3, 5: D|cW2|dR3N       -> |c|dDW2R3N       . .
+ 7,-1, 1: D|bW1|cR2|dN     -> D|b|c|dW1R1N     F .
+ 7, 0, 2: D|bW1|cR2|dN     -> D|bW1|c|dR2N     F .
+ 7, 1, 3: D|bW1|cR2|dN     -> |bD|cW2|dR3N     F .
+ 7, 2, 4: D|bW1|cR2|dN     -> |b|cD|dW4R4N     F .
+ 8, 0, 2: |dDW3R3N         == |dDW3R3N         . .
+ 9, 0, 2: |cDW2R2|dN       -> |cD|dW2R2N       F .
+10, 1, 3: |cDW2|dR3N       -> |cD|dW3R3N       F .
+10, 2, 4: |cDW2|dR3N       -> |cD|dW3R4N       F .
+10, 3, 5: |cDW2|dR3N       -> |c|dDW2R3N       . .
+11, 0, 2: |bDW1|cR2|dN     -> |bD|c|dW2R2N     F .
+11, 1, 3: |bDW1|cR2|dN     -> |bD|cW2|dR3N     F .
+11, 2, 4: |bDW1|cR2|dN     -> |b|cD|dW4R4N     F .
+12, 1, 3: |cD|dW3R3N       == |cD|dW3R3N       F .
+12, 2, 4: |cD|dW3R3N       -> |cD|dW3R4N       F .
+12, 3, 5: |cD|dW3R3N       -> |c|dDW3R3N       . .
+13, 0, 2: |bD|cW2R2|dN     -> |bD|c|dW2R2N     F .
+13, 1, 3: |bD|cW2R2|dN     -> |bD|cW2|dR3N     F .
+13, 2, 4: |bD|cW2R2|dN     -> |b|cD|dW4R4N     F .
+14, 0, 2: |bD|cW2|dR3N     -> |bD|c|dW2R2N     F .
+14, 1, 3: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 2, 4: |bD|cW2|dR3N     -> |b|cD|dW3R4N     F .
+14, 3, 5: |bD|cW2|dR3N     -> |b|c|dDW2R3N     . .
+15,-1, 1: |aD|bW1|cR2|dN   -> |aD|b|c|dW1R1N   F .
+15, 0, 2: |aD|bW1|cR2|dN   -> |aD|bW1|c|dR2N   F .
+15, 1, 3: |aD|bW1|cR2|dN   -> |a|bD|cW2|dR3N   F .
+15, 2, 4: |aD|bW1|cR2|dN   -> |a|b|cD|dW4R4N   F .
+
+--- rcu_advance_cbs(in_gp, !root):
+ 0, 0, 2: DW3R3N           == DW3R3N           . .
+ 1, 0, 2: DW2R2|dN         -> D|dW2R2N         F .
+ 2, 1, 3: DW2|dR3N         -> D|dW3R3N         F .
+ 2, 2, 4: DW2|dR3N         -> D|dW3R4N         F .
+ 2, 3, 5: DW2|dR3N         -> |dDW2R3N         . .
+ 3, 0, 2: DW1|cR2|dN       -> D|c|dW2R2N       F .
+ 3, 1, 3: DW1|cR2|dN       -> D|cW2|dR3N       F .
+ 3, 2, 4: DW1|cR2|dN       -> |cD|dW4R4N       F .
+ 4, 1, 3: D|dW3R3N         == D|dW3R3N         F .
+ 4, 2, 4: D|dW3R3N         -> D|dW3R4N         F .
+ 4, 3, 5: D|dW3R3N         -> |dDW3R3N         . .
+ 5, 0, 2: D|cW2R2|dN       -> D|c|dW2R2N       F .
+ 5, 1, 3: D|cW2R2|dN       -> D|cW2|dR3N       F .
+ 5, 2, 4: D|cW2R2|dN       -> |cD|dW4R4N       F .
+ 6, 0, 2: D|cW2|dR3N       -> D|c|dW2R2N       F .
+ 6, 1, 3: D|cW2|dR3N       == D|cW2|dR3N       F .
+ 6, 2, 4: D|cW2|dR3N       -> |cD|dW3R4N       F .
+ 6, 3, 5: D|cW2|dR3N       -> |c|dDW2R3N       . .
+ 7,-1, 1: D|bW1|cR2|dN     -> D|b|c|dW1R1N     F .
+ 7, 0, 2: D|bW1|cR2|dN     -> D|bW1|c|dR2N     F .
+ 7, 1, 3: D|bW1|cR2|dN     -> |bD|cW2|dR3N     F .
+ 7, 2, 4: D|bW1|cR2|dN     -> |b|cD|dW4R4N     F .
+ 8, 0, 2: |dDW3R3N         == |dDW3R3N         . .
+ 9, 0, 2: |cDW2R2|dN       -> |cD|dW2R2N       F .
+10, 1, 3: |cDW2|dR3N       -> |cD|dW3R3N       F .
+10, 2, 4: |cDW2|dR3N       -> |cD|dW3R4N       F .
+10, 3, 5: |cDW2|dR3N       -> |c|dDW2R3N       . .
+11, 0, 2: |bDW1|cR2|dN     -> |bD|c|dW2R2N     F .
+11, 1, 3: |bDW1|cR2|dN     -> |bD|cW2|dR3N     F .
+11, 2, 4: |bDW1|cR2|dN     -> |b|cD|dW4R4N     F .
+12, 1, 3: |cD|dW3R3N       == |cD|dW3R3N       F .
+12, 2, 4: |cD|dW3R3N       -> |cD|dW3R4N       F .
+12, 3, 5: |cD|dW3R3N       -> |c|dDW3R3N       . .
+13, 0, 2: |bD|cW2R2|dN     -> |bD|c|dW2R2N     F .
+13, 1, 3: |bD|cW2R2|dN     -> |bD|cW2|dR3N     F .
+13, 2, 4: |bD|cW2R2|dN     -> |b|cD|dW4R4N     F .
+14, 0, 2: |bD|cW2|dR3N     -> |bD|c|dW2R2N     F .
+14, 1, 3: |bD|cW2|dR3N     == |bD|cW2|dR3N     F .
+14, 2, 4: |bD|cW2|dR3N     -> |b|cD|dW3R4N     F .
+14, 3, 5: |bD|cW2|dR3N     -> |b|c|dDW2R3N     . .
+15,-1, 1: |aD|bW1|cR2|dN   -> |aD|b|c|dW1R1N   F .
+15, 0, 2: |aD|bW1|cR2|dN   -> |aD|bW1|c|dR2N   F .
+15, 1, 3: |aD|bW1|cR2|dN   -> |a|bD|cW2|dR3N   F .
+15, 2, 4: |aD|bW1|cR2|dN   -> |a|b|cD|dW4R4N   F .
+
+--- rcu_extract_cbs_test(!in_gp, root):
+ 0, 0, 1: DW3R3N           == DW3R3N           . .
+ 1, 0, 1: DW2R2|dN         == DW2R2|dN         . .
+ 2, 2, 3: DW2|dR3N         -> DW2R3|dN         . .
+ 2, 3, 4: DW2|dR3N         -> DW2R3|dN         . .
+ 3, 1, 2: DW1|cR2|dN       -> DW1R2|c|dN       . .
+ 3, 2, 3: DW1|cR2|dN       -> DW1R2|c|dN       . .
+ 4, 2, 3: D|dW3R3N         -> DW3R3|dN         . .
+ 4, 3, 4: D|dW3R3N         -> DW3R3|dN         . .
+ 5, 1, 2: D|cW2R2|dN       -> DW2R2|c|dN       . .
+ 5, 2, 3: D|cW2R2|dN       -> DW2R2|c|dN       . .
+ 6, 1, 2: D|cW2|dR3N       -> DW2R3|c|dN       . .
+ 6, 2, 3: D|cW2|dR3N       -> DW2R3|c|dN       . .
+ 6, 3, 4: D|cW2|dR3N       -> DW2R3|c|dN       . .
+ 7, 0, 1: D|bW1|cR2|dN     -> DW1R2|b|c|dN     . .
+ 7, 1, 2: D|bW1|cR2|dN     -> DW1R2|b|c|dN     . .
+ 7, 2, 3: D|bW1|cR2|dN     -> DW1R2|b|c|dN     . .
+ 8, 0, 1: |dDW3R3N         == |dDW3R3N         . .
+ 9, 0, 1: |cDW2R2|dN       == |cDW2R2|dN       . .
+10, 2, 3: |cDW2|dR3N       -> |cDW2R3|dN       . .
+10, 3, 4: |cDW2|dR3N       -> |cDW2R3|dN       . .
+11, 1, 2: |bDW1|cR2|dN     -> |bDW1R2|c|dN     . .
+11, 2, 3: |bDW1|cR2|dN     -> |bDW1R2|c|dN     . .
+12, 2, 3: |cD|dW3R3N       -> |cDW3R3|dN       . .
+12, 3, 4: |cD|dW3R3N       -> |cDW3R3|dN       . .
+13, 1, 2: |bD|cW2R2|dN     -> |bDW2R2|c|dN     . .
+13, 2, 3: |bD|cW2R2|dN     -> |bDW2R2|c|dN     . .
+14, 1, 2: |bD|cW2|dR3N     -> |bDW2R3|c|dN     . .
+14, 2, 3: |bD|cW2|dR3N     -> |bDW2R3|c|dN     . .
+14, 3, 4: |bD|cW2|dR3N     -> |bDW2R3|c|dN     . .
+15, 0, 1: |aD|bW1|cR2|dN   -> |aDW1R2|b|c|dN   . .
+15, 1, 2: |aD|bW1|cR2|dN   -> |aDW1R2|b|c|dN   . .
+15, 2, 3: |aD|bW1|cR2|dN   -> |aDW1R2|b|c|dN   . .
