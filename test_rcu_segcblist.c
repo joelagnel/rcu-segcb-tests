@@ -13,7 +13,7 @@ static inline void rcu_segcblist_dump(struct rcu_segcblist *rsclp)
 	for (i = RCU_DONE_TAIL; i < RCU_CBLIST_NSEGS; i++)
 		pr_info("\t->tails[%d] = %p, ->gp_seq[%d] = %ld\n",
 		       i, rsclp->tails[i], i, rsclp->gp_seq[i]);
-	pr_info("->len = %ld, ->len_lazy = %ld\n", rsclp->len, rsclp->len_lazy);
+	pr_info("->len = %ld\n", rsclp->len);
 }
 
 /*
@@ -53,14 +53,11 @@ static inline void rcu_segcblist_dump(struct rcu_segcblist *rsclp)
 	} \
 	WARN_ON_ONCE(___rsclp->tails[RCU_NEXT_TAIL] && cnt < ___lim && \
 		     i != RCU_CBLIST_NSEGS); \
-	if ((___rsclp->len < 0 || ___rsclp->len_lazy < 0 || \
-	     ___rsclp->len < ___rsclp->len_lazy) && xchg(&notdone3, 0)) { \
+	if ((___rsclp->len < 0) && xchg(&notdone3, 0)) { \
 		pr_info("Counter problems\n"); \
 		rcu_segcblist_dump(___rsclp); \
 	} \
 	WARN_ON_ONCE(___rsclp->len < 0); \
-	WARN_ON_ONCE(___rsclp->len_lazy < 0); \
-	WARN_ON_ONCE(___rsclp->len < ___rsclp->len_lazy); \
 	!notdone1 || !notdone2 || !notdone3; \
 })
 
@@ -459,7 +456,6 @@ int main(int argc, char *argv[])
 	rcu_cblist_init(&rcl[0]);
 	assert(!rcl[0].head);
 	assert(rcl[0].len == 0);
-	assert(rcl[0].len_lazy == 0);
 	assert(!rcu_cblist_head(&rcl[0]));
 	assert(rcu_cblist_count_cbs(&rcl[0], 100) == 0);
 
@@ -469,7 +465,6 @@ int main(int argc, char *argv[])
 	assert(rcu_segcblist_empty(&rscl));
 	assert(rcl[0].head);
 	assert(rcl[0].len == 1);
-	assert(rcl[0].len_lazy == 0);
 	assert(rcu_cblist_head(&rcl[0]) == &rh[0]);
 	assert(rcu_cblist_tail(&rcl[0]) == &rh[0].next);
 	assert(rcu_cblist_count_cbs(&rcl[0], 100) == 1);
@@ -478,7 +473,6 @@ int main(int argc, char *argv[])
 	assert(rhp == &rh[0]);
 	assert(!rcl[0].head);
 	assert(rcl[0].len == 0);
-	assert(rcl[0].len_lazy == 0);
 	rhp = rcu_cblist_dequeue(&rcl[0]);
 	assert(rhp == NULL);
 	assert(rcu_cblist_count_cbs(&rcl[0], 100) == 0);
