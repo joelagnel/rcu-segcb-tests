@@ -351,7 +351,6 @@ rcu_extract_cbs_test(struct rcu_segcblist *rsclp, char *s_in,
 	rcu_segcblist_fsck(rsclp, 10);
 	rcu_cblist_init(&rcl_next);
 	ql = rcu_segcblist_n_cbs(rsclp);
-	rcu_segcblist_extract_count(rsclp, &rcl_done);
 	rcu_segcblist_extract_done_cbs(rsclp, &rcl_done);
 	rcu_segcblist_extract_pend_cbs(rsclp, &rcl_next);
 	rcu_segcblist_fsck(rsclp, 10);
@@ -539,12 +538,6 @@ void rcu_segcblist_insert_count(struct rcu_segcblist *rsclp,
 	rclp->len = 0;
 }
 
-void rcu_segcblist_extract_count(struct rcu_segcblist *rsclp,
-					       struct rcu_cblist *rclp)
-{
-	rclp->len = rcu_segcblist_xchg_len(rsclp, 0);
-}
-
 /* Done legacy functions.. ******/
 
 int main(int argc, char *argv[])
@@ -598,7 +591,6 @@ int main(int argc, char *argv[])
 
 	rcu_segcblist_extract_done_cbs(&rscl, &rcl[0]);
 	rcu_segcblist_extract_pend_cbs(&rscl, &rcl[0]);
-	rcu_segcblist_extract_count(&rscl, &rcl[0]);
 	assert(rcu_segcblist_empty(&rscl));
 	assert(rcl[0].head);
 	assert(rcl[0].len == 1);
