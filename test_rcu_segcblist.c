@@ -114,6 +114,8 @@ void init_rh(int syndrome, struct rcu_segcblist *rsclp)
 	int i;
 	struct rcu_head *lastrhp;
 	int s;
+	long c;
+	struct rcu_head *h, **cur_tail;
 
 	for (i = 0; i < RCU_CBLIST_NSEGS - 1; i++)
 		rh[i].next = &rh[i + 1];
@@ -138,6 +140,21 @@ void init_rh(int syndrome, struct rcu_segcblist *rsclp)
 		rsclp->len = 0;
 	else
 		rsclp->len = &rh[RCU_CBLIST_NSEGS - 1] - lastrhp + 1;
+
+	cur_tail = &(rsclp->head);
+	for (i = 0; i < RCU_CBLIST_NSEGS; i++) {
+		c = 0;
+
+		if (rsclp->tails[i] != cur_tail) {
+			c = 1;
+			for (h = *cur_tail; h->next != *(rsclp->tails[i]); h = h->next) {
+				c++;
+			}
+		}
+
+		rcu_segcblist_set_seglen(rsclp, i, c);
+		cur_tail = rsclp->tails[i];
+	}
 }
 
 bool rcu_segcblist_future_gp_needed(struct rcu_segcblist *rsclp,
