@@ -11,3 +11,6 @@ cp /usr/local/google/home/joelaf/repo/linux-master/kernel/rcu/rcu_segcblist.c rc
 cc -g -o test_rcu_segcblist -Iempty_includes -Iinclude test_rcu_segcblist.c
 ./test_rcu_segcblist > $F
 cmp $F rcu_segcblist.out
+diff -u $F rcu_segcblist.out
+
+cat $F
