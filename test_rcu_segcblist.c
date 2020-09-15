@@ -380,7 +380,6 @@ rcu_extract_cbs_test(struct rcu_segcblist *rsclp, char *s_in,
 		*s++ = '?';
 		*s++ = 'C';
 	}
-	rcu_segcblist_insert_count(rsclp, &rcl_done);
 	rcu_segcblist_insert_done_cbs(rsclp, &rcl_done);
 	rcu_segcblist_insert_pend_cbs(rsclp, &rcl_next);
 	assert(ql == rcu_segcblist_n_cbs(rsclp));
@@ -547,13 +546,6 @@ static inline struct rcu_head **rcu_segcblist_tail(struct rcu_segcblist *rsclp)
 {
        WARN_ON_ONCE(rcu_segcblist_empty(rsclp));
        return rsclp->tails[RCU_NEXT_TAIL];
-}
-
-void rcu_segcblist_insert_count(struct rcu_segcblist *rsclp,
-				struct rcu_cblist *rclp)
-{
-	rcu_segcblist_add_len(rsclp, rclp->len);
-	rclp->len = 0;
 }
 
 /* Done legacy functions.. ******/
