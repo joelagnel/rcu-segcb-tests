@@ -12,8 +12,9 @@ static inline void rcu_segcblist_dump(struct rcu_segcblist *rsclp)
 
 	pr_info("%p->head = %p\n", rsclp, rsclp->head);
 	for (i = RCU_DONE_TAIL; i < RCU_CBLIST_NSEGS; i++)
-		pr_info("\t->tails[%d] = %p, ->gp_seq[%d] = %ld\n",
-		       i, rsclp->tails[i], i, rsclp->gp_seq[i]);
+		pr_info("\t->tails[%d] = %p, ->gp_seq[%d] = %ld seglen = %ld\n",
+		       i, rsclp->tails[i], i, rsclp->gp_seq[i],
+		       rcu_segcblist_get_seglen(rsclp, i));
 	pr_info("->len = %ld\n", rsclp->len);
 }
 
